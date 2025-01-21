@@ -1,0 +1,80 @@
+import pyttsx3
+
+# Initialize text-to-speech
+engine = pyttsx3.init()
+
+# Function to speak text
+def talk(text):
+    engine.say(text)
+    engine.runAndWait()
+
+# Symptoms for common diseases
+symptoms_data = {
+    "common_cold": ["runny nose", "sneezing", "sore throat", "mild cough", "mild fatigue"],
+    "flu": ["fever", "headache", "severe fatigue", "muscle aches", "dry cough", "chills"],
+    "strep_throat": ["sore throat", "painful swallowing", "fever", "swollen lymph nodes"],
+    "bronchitis": ["cough with mucus", "shortness of breath", "chest discomfort", "fatigue"],
+    "pneumonia": ["fever", "chills", "cough with phlegm", "shortness of breath"],
+    "allergies": ["sneezing", "runny nose", "itchy eyes", "nasal congestion"],
+    "sinusitis": ["facial pain", "nasal congestion", "headache", "postnasal drip"],
+    "covid_19": ["fever", "dry cough", "tiredness", "loss of taste or smell"]
+}
+
+# Ask about symptoms
+def ask_about_symptom(symptom, asked_symptoms):
+    if symptom not in asked_symptoms:
+        talk(f"Do you have {symptom}? Please answer yes or no.")
+        print(f"Do you have {symptom}? (yes/no): ", end="")
+        response = input().lower()
+        asked_symptoms.add(symptom)
+        return response == "yes"
+    return False
+
+# Chatbot logic
+def detect_disease():
+    talk("Welcome to the Symptom Checker!")
+    print("Welcome to the Symptom Checker!")
+    talk("I will ask you some questions about your symptoms. Please answer yes or no.")
+
+    disease_counts = {disease: 0 for disease in symptoms_data}
+    asked_symptoms = set()
+
+    # Check for symptoms for each disease
+    for disease, symptoms in symptoms_data.items():
+        for symptom in symptoms:
+            if ask_about_symptom(symptom, asked_symptoms):
+                disease_counts[disease] += 1
+
+    # Determine the result
+    talk("Analyzing your symptoms...")
+    print("Analyzing your symptoms...")
+
+    probable_disease = max(disease_counts, key=disease_counts.get)
+    count = disease_counts[probable_disease]
+
+    if count > 0:
+        talk(f"Based on your responses, you may have {probable_disease.replace('_', ' ')}. Please consult a doctor if your symptoms worsen.")
+        print(f"Result: You may have {probable_disease.replace('_', ' ')}. Please consult a doctor if your symptoms worsen.")
+    else:
+        talk("Your symptoms are inconclusive. Please consult a healthcare professional for an accurate diagnosis.")
+        print("Result: Symptoms are inconclusive. Please consult a healthcare professional.")
+
+# Main function
+def main():
+    while True:
+        talk("Do you want to start the symptom checker? Please answer yes or no.")
+        print("Do you want to start the symptom checker? (yes/no): ", end="")
+        start_response = input().lower()
+
+        if start_response == "yes":
+            detect_disease()
+        elif start_response == "no":
+            talk("Okay, stay healthy and take care!")
+            print("Okay, stay healthy and take care!")
+            break
+        else:
+            talk("I didn't understand that. Please answer yes or no.")
+            print("I didn't understand that. Please answer yes or no.")
+
+if __name__ == "__main__":
+    main()
