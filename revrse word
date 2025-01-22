@@ -1,3 +1,0 @@
-word = (input("enetr word: "))
-print(word)
-
